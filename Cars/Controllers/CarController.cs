@@ -7,31 +7,6 @@ namespace Cars.Controllers
     [ApiController]
     public class CarController : ControllerBase
     {
-        private static List<Car> cars = new List<Car>()
-        {
-            new Car()
-                {
-                    Id = 1,
-                    Model = "Land Cruiser 300",
-                    Brand = "Toyota",
-                    Color = "Черный",
-                    Type = "Внедорожник",
-                    Price = 5841500,
-                    Released = new DateTime(2021, 10, 20),
-                    IsSold = true
-                },
-            new Car()
-                {
-                    Id = 2,
-                    Model = "A4 V (B9)",
-                    Brand = "Audi",
-                    Color = "Синий",
-                    Type = "Седан",
-                    Price = 1114385,
-                    Released = new DateTime(2017, 01, 04),
-                    IsSold = false
-                }
-        };
         private readonly DataContext _context;
         public CarController(DataContext context)
         {
@@ -54,7 +29,7 @@ namespace Cars.Controllers
         [HttpPost]
         public async Task<ActionResult<List<Car>>> AddCar(Car car)
         {
-            _context.Cars.AddAsync(car);
+            _context.Cars.Add(car);
             await _context.SaveChangesAsync();
             return Ok(await _context.Cars.ToListAsync());
         }

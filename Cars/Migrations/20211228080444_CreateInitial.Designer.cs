@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cars.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211228060315_CreateInitial")]
+    [Migration("20211228080444_CreateInitial")]
     partial class CreateInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
