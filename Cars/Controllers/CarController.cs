@@ -13,11 +13,12 @@ namespace Cars.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet]   
         public async Task<ActionResult<List<Car>>> Get()
         {            
             return Ok(await _context.Cars.ToListAsync());
         }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Car>> Get(int id)
         {
@@ -26,6 +27,15 @@ namespace Cars.Controllers
                 return NotFound("Car is not found");
             return Ok(car);
         }
+        [HttpGet("{Brand}")]
+        public async Task<ActionResult<Car>> Get(string brand)
+        {
+            var carbyBrand = await _context.Cars.Select(x => x.Brand).AllAsync();
+            if (carbyBrand == null)
+                return NotFound("Car is not found");
+            return Ok(carbyBrand);
+        }
+
         [HttpPost]
         public async Task<ActionResult<List<Car>>> AddCar(Car car)
         {
@@ -33,6 +43,7 @@ namespace Cars.Controllers
             await _context.SaveChangesAsync();
             return Ok(await _context.Cars.ToListAsync());
         }
+
         [HttpPut]
         public async Task<ActionResult<List<Car>>> UpdateCar(Car request)
         {
@@ -51,6 +62,7 @@ namespace Cars.Controllers
 
             return Ok(await _context.Cars.ToListAsync());
         }
+
         [HttpDelete ]
         public async Task<ActionResult<List<Car>>> Delete(int id)
         {
