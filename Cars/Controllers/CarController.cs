@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Cars.Repositories.Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cars.Controllers
@@ -7,71 +8,41 @@ namespace Cars.Controllers
     [ApiController]
     public class CarController : ControllerBase
     {
-        private readonly DataContext _context;
-        public CarController(DataContext context)
+        private readonly ICarRepository _cars;
+        public CarController(ICarRepository cars)
         {
-            _context = context;
+            _cars = cars;
         }
 
         [HttpGet]   
         public async Task<ActionResult<List<Car>>> Get()
-        {            
-            return Ok(await _context.Cars.ToListAsync());
+        {
+            var result = await _cars.GetAllCars();
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Car>> Get(int id)
         {
-            var car = await _context.Cars.FindAsync(id);
-            if (car == null)
-                return NotFound("Car is not found");
-            return Ok(car);
-        }
-        [HttpGet("{Brand}")]
-        public async Task<ActionResult<Car>> Get(string brand)
-        {
-            var carbyBrand = await _context.Cars.Select(x => x.Brand).AllAsync();
-            if (carbyBrand == null)
-                return NotFound("Car is not found");
-            return Ok(carbyBrand);
+            return Ok(_cars.GetCarById(id));
         }
 
         [HttpPost]
         public async Task<ActionResult<List<Car>>> AddCar(Car car)
         {
-            _context.Cars.Add(car);
-            await _context.SaveChangesAsync();
-            return Ok(await _context.Cars.ToListAsync());
+            return Ok(_cars.CreateCar(car));
         }
 
         [HttpPut]
         public async Task<ActionResult<List<Car>>> UpdateCar(Car request)
         {
-            var dbCar = await _context.Cars.FindAsync(request.Id);
-            if (dbCar == null)
-                return BadRequest("Car is not found");
-            dbCar.Model = request.Model;
-            dbCar.Brand = request.Brand;
-            dbCar.Color = request.Color;
-            dbCar.Type = request.Type;
-            dbCar.Price = request.Price;
-            dbCar.Released = request.Released;
-            dbCar.IsSold = request.IsSold;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(await _context.Cars.ToListAsync());
+            return Ok(_cars.UpdateCar(request));
         }
 
         [HttpDelete ]
         public async Task<ActionResult<List<Car>>> Delete(int id)
         {
-            var dbCar = await _context.Cars.FindAsync(id);
-            if (dbCar == null)
-                return NotFound("Car is not found");
-            _context.Cars.Remove(dbCar);
-            await _context.SaveChangesAsync();
-            return Ok(await _context.Cars.ToListAsync());
+            return Ok(_cars.DeleteCar(id));
         }
 
     }
